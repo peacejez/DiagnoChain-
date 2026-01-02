@@ -3175,3 +3175,41 @@ select.form-input {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Doctor Appointments Container Standardization --- */
+.doctor-appointments-container {
+    padding: 30px;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    overflow-y: auto;
+    /* Allow scrolling within the container */
+    display: flex;
+    flex-direction: column;
+}
+
+.appointments-header {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, #2c5282 0%, #3d6ba8 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.appointments-header h2 {
+    color: white;
+    font-size: 28px;
+    margin: 0;
+    font-weight: 700;
+}
+
+.appointments-header .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 5px 0 0 0;
+    font-size: 15px;
+}

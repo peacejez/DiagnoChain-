@@ -446,10 +446,10 @@ function CaseDetailsModal({ caseData, onClose, onUpdateStatus, getStatusColor, f
 const styles = {
     container: {
         padding: '30px',
-        maxWidth: '1600px',
-        margin: '0 auto',
+        width: '100%',
+        height: '100%',
         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        minHeight: '100vh',
+        overflowY: 'auto', // Allow scrolling within the component
     },
     header: {
         marginBottom: '30px',

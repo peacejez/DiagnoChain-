@@ -517,8 +517,10 @@ function PracticeTab({ formData, isEditing, handleInputChange }) {
 const styles = {
     container: {
         padding: '30px',
-        maxWidth: '1200px',
-        margin: '0 auto',
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        overflowY: 'auto', // Allow scrolling within the component
     },
     profileHeader: {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
