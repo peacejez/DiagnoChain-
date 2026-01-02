@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+ai-model/node_modules/
+client/node_modules/
+server/node_modules/
+smart_contracts/node_modules/
+
+# Environment Variables
+.env
+server/.env
+.env.local
+
+# Firebase Credentials
+firebase-credentials.json
+*-firebase-adminsdk-*.json
+
+# Build files
+smart_contracts/artifacts/
+smart_contracts/cache/
+smart_contracts/typechain-types/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
