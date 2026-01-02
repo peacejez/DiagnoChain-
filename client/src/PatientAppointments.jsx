@@ -20,6 +20,9 @@ function PatientAppointments({ walletAddress, userData, initialOpen = false, onA
             const deadStatuses = ['cancelled', 'rejected', 'rescheduled', 'completed'];
             return appDate >= new Date() && !deadStatuses.includes(app.status.toLowerCase());
         }
+        if (filterStatus === 'pending') {
+            return ['pending', 'rescheduled'].includes(app.status.toLowerCase());
+        }
         return app.status.toLowerCase() === filterStatus.toLowerCase();
     });
 
