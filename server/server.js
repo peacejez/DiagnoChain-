@@ -168,7 +168,8 @@ const db = admin.firestore(); // Get the Firestore database instance
 
 // --- Middleware ---
 app.use(cors({ origin: 'http://localhost:5173' }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 const nonces = {}; // In-memory store for nonces
 

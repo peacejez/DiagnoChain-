@@ -5,6 +5,18 @@ import './Web3Login.css'; // Reuse existing styles
 
 const API_BASE_URL = 'http://localhost:3001';
 
+const getStatusColor = (status) => {
+    const colors = {
+        'pending': 'yellow',
+        'confirmed': 'green',
+        'completed': '#007BFF',
+        'cancelled': '#DC3545',
+        'rescheduled': '#17A2B8',
+        'rejected': 'red'
+    };
+    return colors[status.toLowerCase()] || '#6C757D';
+};
+
 function DoctorAppointments({ walletAddress, userData }) {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -104,17 +116,7 @@ function DoctorAppointments({ walletAddress, userData }) {
         return `${displayHour}:${minutes} ${ampm}`;
     };
 
-    const getStatusColor = (status) => {
-        const colors = {
-            'pending': '#FFC107',
-            'confirmed': '#28A745',
-            'completed': '#007BFF',
-            'cancelled': '#DC3545',
-            'rescheduled': '#17A2B8',
-            'rejected': '#6C757D'
-        };
-        return colors[status.toLowerCase()] || '#6C757D';
-    };
+
 
     // Filter appointments
     const filteredAppointments = appointments.filter(apt => {
@@ -337,9 +339,12 @@ function AppointmentDetailsModal({ appointment, onClose, onUpdateStatus }) {
                             <span className="detail-label">Status:</span>
                             <span className="detail-value">
                                 <span className="status-badge" style={{
-                                    backgroundColor: appointment.status === 'Pending' ? '#FFC107' :
-                                        appointment.status === 'Confirmed' ? '#28A745' :
-                                            appointment.status === 'Completed' ? '#007BFF' : '#DC3545'
+                                    backgroundColor: getStatusColor(appointment.status),
+                                    color: 'white',
+                                    padding: '4px 12px',
+                                    borderRadius: '12px',
+                                    fontSize: '12px',
+                                    fontWeight: '500'
                                 }}>
                                     {appointment.status}
                                 </span>

@@ -8,6 +8,7 @@ function DoctorProfile({ walletAddress, userData, onUpdateProfile }) {
     const [activeTab, setActiveTab] = useState('personal');
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const fileInputRef = React.useRef(null);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -114,6 +115,26 @@ function DoctorProfile({ walletAddress, userData, onUpdateProfile }) {
         }
     };
 
+    // Handle File Upload via Click
+    const handleAvatarClick = () => {
+        if (isEditing && fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, profilePicture: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+        // Reset input so the same file can be selected again if needed
+        e.target.value = '';
+    };
+
     const handleCancel = () => {
         // Reset form to original userData
         setFormData({
@@ -148,7 +169,24 @@ function DoctorProfile({ walletAddress, userData, onUpdateProfile }) {
                         <img
                             src={formData.profilePicture || 'https://via.placeholder.com/150'}
                             alt="Doctor"
-                            style={styles.avatar}
+                            style={{
+                                ...styles.avatar,
+                                cursor: isEditing ? 'pointer' : 'default',
+                                opacity: isEditing ? 0.9 : 1
+                            }}
+                            onClick={handleAvatarClick}
+                        />
+                        {isEditing && (
+                            <div style={styles.uploadOverlay} onClick={handleAvatarClick}>
+                                📷
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                            onChange={handleFileChange}
                         />
                         <div style={styles.roleBadge}>Doctor</div>
                     </div>
@@ -311,18 +349,7 @@ function PersonalDetailsTab({ formData, isEditing, handleInputChange, handleArra
                 </div>
             </div>
 
-            <div style={styles.formGroup}>
-                <label style={styles.label}>Professional Photo URL</label>
-                <input
-                    type="text"
-                    name="profilePicture"
-                    value={formData.profilePicture}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
-                    placeholder="https://example.com/photo.jpg"
-                    style={styles.input}
-                />
-            </div>
+
 
             <div style={styles.formGroup}>
                 <label style={styles.label}>Professional Biography</label>
@@ -523,7 +550,7 @@ const styles = {
         overflowY: 'auto', // Allow scrolling within the component
     },
     profileHeader: {
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2c5282 0%, #3d6ba8 100%)',
         padding: '40px',
         borderRadius: '16px',
         color: 'white',
@@ -541,6 +568,19 @@ const styles = {
     },
     avatarContainer: {
         position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    uploadOverlay: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        fontSize: '24px',
+        color: 'white',
+        pointerEvents: 'none',
+        zIndex: 10,
     },
     avatar: {
         width: '120px',
@@ -667,6 +707,9 @@ const styles = {
         padding: '35px',
         borderRadius: '12px',
         boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+        // Ensure no nested scrolling limits
+        height: 'auto',
+        overflow: 'visible',
     },
     formContainer: {},
     formRow: {
