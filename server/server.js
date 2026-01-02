@@ -317,7 +317,11 @@ app.get('/api/user/:walletAddress', async (req, res) => {
 // G. Register New User - WITH BLOCKCHAIN STORAGE
 // G. Register New User - FIXED VERSION
 app.post('/api/register', async (req, res) => {
-    const { walletAddress, fullName, nric, email, phoneNumber, dateOfBirth, role, profilePicture } = req.body;
+    const {
+        walletAddress, fullName, nric, email, phoneNumber, dateOfBirth, role, profilePicture,
+        // Doctor specific fields
+        medicalLicenseNumber, specialization, yearsOfExperience, boardCertifications, educationalHistory
+    } = req.body;
 
     console.log('=== USER REGISTRATION WITH BLOCKCHAIN ===');
     console.log('Wallet:', walletAddress);
@@ -378,6 +382,16 @@ app.post('/api/register', async (req, res) => {
         const block = await provider.getBlock(blockNumber);
         const blockTimestamp = new Date(block.timestamp * 1000).toISOString();
 
+        // Process doctor specific data
+        let processedCertifications = [];
+        if (boardCertifications) {
+            if (Array.isArray(boardCertifications)) {
+                processedCertifications = boardCertifications;
+            } else if (typeof boardCertifications === 'string') {
+                processedCertifications = boardCertifications.split(',').map(c => c.trim()).filter(Boolean);
+            }
+        }
+
         // Store in Firebase with blockchain info
         const userData = {
             walletAddress: addressToStore,
@@ -388,6 +402,16 @@ app.post('/api/register', async (req, res) => {
             dateOfBirth: dateOfBirth || null,
             role,
             profilePicture: profilePicture || null,
+
+            // Doctor fields (only if role is doctor)
+            ...(role === 'doctor' && {
+                medicalLicenseNumber: medicalLicenseNumber || null,
+                specialization: specialization || null,
+                yearsOfExperience: yearsOfExperience || null,
+                boardCertifications: processedCertifications,
+                educationalHistory: educationalHistory || null
+            }),
+
             registeredAt: new Date().toISOString(),
             isActive: true,
             blockchainTxHash: txHash,

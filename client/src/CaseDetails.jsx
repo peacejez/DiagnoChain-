@@ -323,7 +323,7 @@ function CaseDetailsModal({ caseData, onClose, onUpdateStatus, getStatusColor, f
                                     <ul style={styles.possibilitiesList}>
                                         {caseData.otherPossibilities.map((possibility, idx) => (
                                             <li key={idx}>
-                                                {possibility.disease} ({possibility.confidence}%)
+                                                {possibility.disease} ({(possibility.confidence * 100).toFixed(2)}%)
                                             </li>
                                         ))}
                                     </ul>
@@ -637,7 +637,8 @@ const styles = {
         alignItems: 'center',
         padding: '25px 35px',
         borderBottom: '2px solid #e2e8f0',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2c5282 0%, #3d6ba8 100%)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
         borderRadius: '20px 20px 0 0',
     },
     modalTitle: {
@@ -703,7 +704,7 @@ const styles = {
         color: '#2d3748',
     },
     diagnosisCard: {
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2c5282 0%, #3d6ba8 100%)',
         padding: '25px',
         borderRadius: '12px',
         color: 'white',

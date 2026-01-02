@@ -122,14 +122,42 @@ function DoctorProfile({ walletAddress, userData, onUpdateProfile }) {
         }
     };
 
-    const handleFileChange = (e) => {
+    const compressImage = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 500; // Resize to max 500px width
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Compress to JPEG with 0.7 quality
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    resolve(compressedDataUrl);
+                };
+            };
+        });
+    };
+
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, profilePicture: reader.result }));
-            };
-            reader.readAsDataURL(file);
+            try {
+                // Compress image before setting state
+                const compressedImage = await compressImage(file);
+                setFormData(prev => ({ ...prev, profilePicture: compressedImage }));
+            } catch (error) {
+                console.error("Error compressing image:", error);
+                alert("Failed to process image. Please try another one.");
+            }
         }
         // Reset input so the same file can be selected again if needed
         e.target.value = '';
@@ -371,6 +399,10 @@ function PersonalDetailsTab({ formData, isEditing, handleInputChange, handleArra
 function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInput }) {
     return (
         <div style={styles.formContainer}>
+            <div style={{ padding: '10px', background: '#e2e8f0', borderRadius: '8px', marginBottom: '20px', color: '#4a5568', fontSize: '0.9rem' }}>
+                ℹ️ <strong>Note:</strong> These credentials are verified during registration and cannot be edited.
+            </div>
+
             <div style={styles.formRow}>
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Medical License Number *</label>
@@ -378,10 +410,10 @@ function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInp
                         type="text"
                         name="medicalLicenseNumber"
                         value={formData.medicalLicenseNumber}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
+                        readOnly
+                        disabled
                         placeholder="e.g., MD123456"
-                        style={styles.input}
+                        style={{ ...styles.input, cursor: 'not-allowed', background: '#f8f9fa' }}
                     />
                 </div>
                 <div style={styles.formGroup}>
@@ -390,10 +422,10 @@ function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInp
                         type="text"
                         name="specialization"
                         value={formData.specialization}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
+                        readOnly
+                        disabled
                         placeholder="e.g., Cardiology, General Practice"
-                        style={styles.input}
+                        style={{ ...styles.input, cursor: 'not-allowed', background: '#f8f9fa' }}
                     />
                 </div>
             </div>
@@ -405,10 +437,10 @@ function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInp
                         type="number"
                         name="yearsOfExperience"
                         value={formData.yearsOfExperience}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
+                        readOnly
+                        disabled
                         placeholder="e.g., 10"
-                        style={styles.input}
+                        style={{ ...styles.input, cursor: 'not-allowed', background: '#f8f9fa' }}
                     />
                 </div>
                 <div style={styles.formGroup}>
@@ -417,10 +449,10 @@ function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInp
                         type="text"
                         name="boardCertifications"
                         value={formData.boardCertifications?.join(', ') || ''}
-                        onChange={(e) => handleArrayInput('boardCertifications', e.target.value)}
-                        disabled={!isEditing}
+                        readOnly
+                        disabled
                         placeholder="ABIM, ABFM (comma-separated)"
-                        style={styles.input}
+                        style={{ ...styles.input, cursor: 'not-allowed', background: '#f8f9fa' }}
                     />
                 </div>
             </div>
@@ -430,11 +462,11 @@ function CredentialsTab({ formData, isEditing, handleInputChange, handleArrayInp
                 <textarea
                     name="educationalHistory"
                     value={formData.educationalHistory}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
+                    readOnly
+                    disabled
                     rows="4"
                     placeholder="M.D. - Harvard Medical School, 2010&#10;Residency - Johns Hopkins Hospital, 2014"
-                    style={{ ...styles.input, ...styles.textarea }}
+                    style={{ ...styles.input, ...styles.textarea, cursor: 'not-allowed', background: '#f8f9fa' }}
                 />
             </div>
         </div>

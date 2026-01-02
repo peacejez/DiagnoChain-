@@ -4,6 +4,7 @@
 
 * {
     font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
 }
 
 /* --- LOGIN & ROLE SELECTION --- */
@@ -197,6 +198,8 @@
     background-color: #FF8C00;
     color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    /* Prevent header from shrinking */
 }
 
 .header-greeting {
@@ -245,6 +248,8 @@
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    /* Constraints children */
 }
 
 
@@ -1625,11 +1630,17 @@ select.form-input {
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    min-height: 500px;
-    max-height: calc(100vh - 180px);
+    /* min-height: 500px;  Removed to prevent overflow on small screens */
+    /* max-height: calc(100vh - 180px); Removed to allow full flex growth */
+    flex: 1;
+    /* Grow to fill content-body */
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0;
+    /* Important for flex scrolling */
+    box-sizing: border-box;
+    /* Include padding in width/height calculations */
 }
 
 .appointments-header {
@@ -1682,7 +1693,10 @@ select.form-input {
     gap: 20px;
     overflow-y: auto;
     padding-right: 10px;
-    flex: 1;
+    flex: 1 1 0;
+    /* flex-grow: 1, flex-shrink: 1, flex-basis: 0. Crucial for scrolling */
+    min-height: 0;
+    /* Important for nested flex scrolling */
 }
 
 .appointments-list::-webkit-scrollbar {
@@ -1711,6 +1725,8 @@ select.form-input {
     border-radius: 10px;
     border-left: 5px solid #FF8C00;
     transition: all 0.3s;
+    flex-shrink: 0;
+    /* Prevent card from shrinking in flex list */
 }
 
 .appointment-card:hover {

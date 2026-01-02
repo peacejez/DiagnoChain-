@@ -14,7 +14,7 @@ import defaultProfilePic from './assets/defaultprofilepic.png';
 
 const API_BASE_URL = 'http://localhost:3001';
 
-function DoctorHome({ walletAddress, userData }) {
+function DoctorHome({ walletAddress, userData, refreshUserData }) {
     const [currentView, setCurrentView] = useState('dashboard');
 
     // Listen for hash changes to handle "View Appointments" link
@@ -111,7 +111,7 @@ function DoctorHome({ walletAddress, userData }) {
                 {/* Header Bar */}
                 <div className="header-bar">
                     <div className="header-greeting">
-                        Hello, Dr. {userData?.fullName?.split(' ')[1] || 'Doctor'}
+                        Hello, Dr. {userData?.fullName || 'Doctor'}
                     </div>
                     <div className="header-user-info">
                         <span className="role-tag doctor-tag">Doctor</span>
@@ -161,6 +161,7 @@ function DoctorHome({ walletAddress, userData }) {
                         <DoctorProfile
                             walletAddress={walletAddress}
                             userData={userData}
+                            onUpdateProfile={refreshUserData}
                         />
                     )}
                 </div>

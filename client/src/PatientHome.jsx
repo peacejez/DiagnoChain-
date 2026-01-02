@@ -14,7 +14,7 @@ import defaultProfilePic from './assets/defaultprofilepic.png';
 
 const API_BASE_URL = 'http://localhost:3001';
 
-function PatientHome({ walletAddress, userData: initialUserData }) {
+function PatientHome({ walletAddress, userData: initialUserData, refreshUserData: refreshGlobalUserData }) {
     // --- State Management ---
     const [currentView, setCurrentView] = useState('promo');
     const [userData, setUserData] = useState(initialUserData); // Local state for user data
@@ -69,6 +69,8 @@ function PatientHome({ walletAddress, userData: initialUserData }) {
         } catch (error) {
             console.error('Error refreshing user data:', error);
         }
+        // Sync global state in App.jsx
+        if (refreshGlobalUserData) refreshGlobalUserData();
     };
 
     // --- API HANDLER (Passed to ChatInterface) ---

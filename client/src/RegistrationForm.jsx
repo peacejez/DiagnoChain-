@@ -10,7 +10,12 @@ function RegistrationForm({ walletAddress, preselectedRole, onRegistrationComple
         phoneNumber: '',
         dateOfBirth: '',
         role: preselectedRole, // Pre-filled from role selection
-        profilePicture: null // Will be set from default image
+        profilePicture: null, // Will be set from default image
+        medicalLicenseNumber: '',
+        specialization: '',
+        yearsOfExperience: '',
+        boardCertifications: '',
+        educationalHistory: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -22,14 +27,14 @@ function RegistrationForm({ walletAddress, preselectedRole, onRegistrationComple
                 const response = await fetch(defaultProfilePic);
                 const blob = await response.blob();
                 const reader = new FileReader();
-                
+
                 reader.onloadend = () => {
                     setFormData(prev => ({
                         ...prev,
                         profilePicture: reader.result
                     }));
                 };
-                
+
                 reader.readAsDataURL(blob);
             } catch (error) {
                 console.error('Error converting default image:', error);
@@ -53,7 +58,7 @@ function RegistrationForm({ walletAddress, preselectedRole, onRegistrationComple
 
         try {
             console.log('Submitting registration with profile picture:', !!formData.profilePicture);
-            
+
             const response = await fetch('http://localhost:3001/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -152,7 +157,78 @@ function RegistrationForm({ walletAddress, preselectedRole, onRegistrationComple
                             onChange={handleInputChange}
                             className="form-input"
                         />
+
                     </div>
+
+                    {/* Doctor Specific Fields */}
+                    {preselectedRole === 'doctor' && (
+                        <>
+                            <div className="form-group">
+                                <label>Medical License Number *</label>
+                                <input
+                                    type="text"
+                                    name="medicalLicenseNumber"
+                                    value={formData.medicalLicenseNumber}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-input"
+                                    placeholder="e.g., MD123456"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Specialization *</label>
+                                <input
+                                    type="text"
+                                    name="specialization"
+                                    value={formData.specialization}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-input"
+                                    placeholder="e.g., Cardiology"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Years of Experience *</label>
+                                <input
+                                    type="number"
+                                    name="yearsOfExperience"
+                                    value={formData.yearsOfExperience}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-input"
+                                    placeholder="e.g., 10"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Board Certifications</label>
+                                <input
+                                    type="text"
+                                    name="boardCertifications"
+                                    value={formData.boardCertifications}
+                                    onChange={handleInputChange}
+                                    className="form-input"
+                                    placeholder="ABIM, ABFM (comma-separated)"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Educational History *</label>
+                                <textarea
+                                    name="educationalHistory"
+                                    value={formData.educationalHistory}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="form-input"
+                                    rows="3"
+                                    placeholder="M.D. - Harvard Medical School, 2010"
+                                    style={{ resize: 'vertical' }}
+                                />
+                            </div>
+                        </>
+                    )}
 
                     {/* Role is pre-selected and read-only */}
                     <div className="form-group">
@@ -178,7 +254,7 @@ function RegistrationForm({ walletAddress, preselectedRole, onRegistrationComple
                             type="button"
                             onClick={onCancel}
                             className="web3-button"
-                            style={{ 
+                            style={{
                                 backgroundColor: '#6c757d',
                                 flex: 1
                             }}
