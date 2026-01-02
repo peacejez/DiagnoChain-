@@ -1717,21 +1717,168 @@ select.form-input {
     background: #e67e00;
 }
 
-.appointment-card {
+/* Filter Tabs */
+.filter-tabs {
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    border-left: 5px solid #FF8C00;
-    transition: all 0.3s;
-    flex-shrink: 0;
-    /* Prevent card from shrinking in flex list */
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
 }
 
-.appointment-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.filter-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: #f7fafc;
+    color: #718096;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.filter-tab:hover {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.filter-tab.active {
+    background: #2b6cb0;
+    color: white;
+    border-color: #2b6cb0;
+    box-shadow: 0 4px 6px rgba(43, 108, 176, 0.2);
+}
+
+/* New Row Layout Card Design (User Sketch) */
+.appointment-card-new {
+    display: flex;
+    flex-direction: row;
+    /* FORCE ROW */
+    align-items: center;
+    justify-content: flex-start;
+    /* FORCE LEFT ALIGN */
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    border: 1px solid #edf2f7;
+    margin-bottom: 0;
+    /* Handled by gap in list */
+    gap: 20px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    width: 100%;
+    /* Ensure full width */
+}
+
+.appointment-card-new:hover {
     transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 1. Left Date Box */
+.date-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #2d3748;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 80px;
+    height: 80px;
+    background: #f7fafc;
+}
+
+.date-day {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #2d3748;
+    line-height: 1;
+}
+
+.date-month {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* 2. Middle Info Box */
+.info-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.info-day {
+    font-weight: 600;
+    color: #2b6cb0;
+    font-size: 1rem;
+}
+
+.info-doctor {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+}
+
+.info-desc {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.status-pill-small {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    margin-top: 4px;
+}
+
+.status-pill-small.status-confirmed {
+    background-color: #48bb78;
+}
+
+.status-pill-small.status-pending {
+    background-color: #ed8936;
+}
+
+.status-pill-small.status-cancelled {
+    background-color: #f56565;
+}
+
+.status-pill-small.status-rejected {
+    background-color: #f56565;
+}
+
+.status-pill-small.status-rescheduled {
+    background-color: #805ad5;
+}
+
+.status-pill-small.status-completed {
+    background-color: #4299e1;
+}
+
+/* 3. Right Time Box */
+.time-box {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+    min-width: 100px;
+    margin-left: auto;
 }
 
 .appointment-date-section {

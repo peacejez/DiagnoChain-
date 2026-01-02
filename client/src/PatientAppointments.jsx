@@ -10,6 +10,18 @@ function PatientAppointments({ walletAddress, userData, initialOpen = false, onA
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(initialOpen);
+    const [filterStatus, setFilterStatus] = useState('all');
+
+    // Filter Logic
+    const filteredAppointments = appointments.filter(app => {
+        if (filterStatus === 'all') return true;
+        if (filterStatus === 'upcoming') {
+            const appDate = new Date(`${app.date}T${app.timeSlot}`);
+            const deadStatuses = ['cancelled', 'rejected', 'rescheduled', 'completed'];
+            return appDate >= new Date() && !deadStatuses.includes(app.status.toLowerCase());
+        }
+        return app.status.toLowerCase() === filterStatus.toLowerCase();
+    });
 
     useEffect(() => {
         fetchAppointments();
@@ -68,6 +80,7 @@ function PatientAppointments({ walletAddress, userData, initialOpen = false, onA
             case 'pending': return '#ffc107';
             case 'completed': return '#007bff';
             case 'cancelled': return '#dc3545';
+            case 'rejected': return '#dc3545';
             default: return '#6c757d';
         }
     };
@@ -84,79 +97,94 @@ function PatientAppointments({ walletAddress, userData, initialOpen = false, onA
                 </button>
             </div>
 
+            {/* Filtering Tabs */}
+            <div className="filter-tabs">
+                {['all', 'upcoming', 'pending', 'completed', 'rejected'].map(status => (
+                    <div
+                        key={status}
+                        className={`filter-tab ${filterStatus === status ? 'active' : ''}`}
+                        onClick={() => setFilterStatus(status)}
+                    >
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </div>
+                ))}
+            </div>
+
             {loading && <div className="loading-state">Loading appointments...</div>}
 
             {error && <div className="error-state">{error}</div>}
 
-            {!loading && !error && appointments.length === 0 && (
-                <div className="empty-appointments">
-                    <p>No appointments scheduled yet</p>
-                    <button
-                        className="web3-button"
-                        onClick={() => setShowModal(true)}
-                    >
-                        Schedule Your First Appointment
-                    </button>
-                </div>
-            )}
+            {
+                !loading && !error && filteredAppointments.length === 0 && (
+                    <div className="empty-appointments">
+                        <p>No {filterStatus === 'all' ? '' : filterStatus} appointments found</p>
+                        {filterStatus === 'all' && (
+                            <button
+                                className="web3-button"
+                                onClick={() => setShowModal(true)}
+                            >
+                                Schedule Your First Appointment
+                            </button>
+                        )}
+                    </div>
+                )
+            }
 
-            {!loading && !error && appointments.length > 0 && (
-                <div className="appointments-list">
-                    {appointments.map((appointment) => (
-                        <div key={appointment.id} className="appointment-card">
-                            <div className="appointment-date-section">
-                                <div className="appointment-date">
-                                    {new Date(appointment.date).getDate()}
+            {
+                !loading && !error && filteredAppointments.length > 0 && (
+                    <div className="appointments-list">
+                        {filteredAppointments.map((appointment) => {
+                            const statusClass = `status-${appointment.status.toLowerCase()}`;
+                            return (
+                                <div key={appointment.id} className="appointment-card-new">
+                                    {/* Left: Date Box */}
+                                    <div className="date-box">
+                                        <span className="date-day">{new Date(appointment.date).getDate()}</span>
+                                        <span className="date-month">
+                                            {new Date(appointment.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                        </span>
+                                    </div>
+
+                                    {/* Middle: Info */}
+                                    <div className="info-box">
+                                        <div className="info-day">
+                                            {new Date(appointment.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                                        </div>
+                                        <div className="info-doctor">
+                                            Dr. {appointment.doctorName}
+                                        </div>
+                                        <div className="info-desc">
+                                            {appointment.description || 'General Consultation'}
+                                        </div>
+                                        <div className={`status-pill-small ${statusClass}`}>{appointment.status}</div>
+                                    </div>
+
+                                    {/* Right: Time */}
+                                    <div className="time-box">
+                                        {formatTime(appointment.timeSlot)}
+                                    </div>
                                 </div>
-                                <div className="appointment-month">
-                                    {new Date(appointment.date).toLocaleDateString('en-US', { month: 'short' })}
-                                </div>
-                            </div>
+                            );
+                        })}
+                    </div>
+                )
+            }
 
-                            <div className="appointment-details">
-                                <div className="appointment-main-info">
-                                    <h3>{formatDate(appointment.date)}</h3>
-                                    <p className="appointment-time">
-                                        Time: {formatTime(appointment.timeSlot)}
-                                    </p>
-                                </div>
-
-                                <div className="appointment-meta">
-                                    <p className="appointment-doctor">
-                                        Dr. {appointment.doctorName}
-                                    </p>
-                                    <p className="appointment-description">
-                                        {appointment.description || 'General consultation'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="appointment-status-section">
-                                <span
-                                    className="appointment-status-badge"
-                                    style={{ backgroundColor: getStatusColor(appointment.status) }}
-                                >
-                                    {appointment.status}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {showModal && (
-                <CreateAppointmentModal
-                    walletAddress={walletAddress}
-                    userData={userData}
-                    onClose={() => setShowModal(false)}
-                    onSuccess={() => {
-                        setShowModal(false);
-                        fetchAppointments();
-                        if (onAppointmentCreated) onAppointmentCreated();
-                    }}
-                />
-            )}
-        </div>
+            {
+                showModal && (
+                    <CreateAppointmentModal
+                        walletAddress={walletAddress}
+                        userData={userData}
+                        onClose={() => setShowModal(false)}
+                        onSuccess={() => {
+                            setShowModal(false);
+                            fetchAppointments();
+                            if (onAppointmentCreated) onAppointmentCreated();
+                        }}
+                    />
+                )
+            }
+        </div >
     );
 }
 
